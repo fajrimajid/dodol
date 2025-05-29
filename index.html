@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buat Dodol Sayang</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-image: url('dol1.jpg');
+            background-size: cover;
+            background-position: center;
+            color: #333;
+            padding: 50px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #message-container {
+            font-size: 18px;
+            white-space: pre-line;
+            min-height: 50px;
+        }
+        .container {
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .balloon {
+            position: absolute;
+            width: 100px;
+            animation: float 5s infinite ease-in-out;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-10vh); opacity: 0; }
+        }
+        .cake {
+            display: none;
+            width: 100px;
+            margin: 20px auto;
+            animation: glow 1s infinite alternate;
+        }
+        @keyframes glow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.5); }
+        }
+        .ribbon {
+            display: none;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .icon-button {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        .next-btn, .prev-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: blue;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .calendar {
+            display: none;
+            margin: 10px auto;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .calendar th, .calendar td {
+            border: 1px solid #000;
+            padding: 10px;
+            text-align: center;
+        }
+        .calendar td.special {
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <img src="dol2.jpg" class="balloon" style="left: 10%; animation-duration: 5s;">
+    <img src="dol2.jpg" class="balloon" style="left: 30%; animation-duration: 6s;">
+    <img src="dol2.jpg" class="balloon" style="left: 50%; animation-duration: 7s;">
+    <img src="dol3.jpg" class="balloon" style="left: 70%; animation-duration: 5s;">
+    <img src="dol3.jpg" class="balloon" style="left: 90%; animation-duration: 6s;">
+    <img src="dol3.jpg" class="balloon" style="left: 100%; animation-duration: 7s;">
+
+    <div class="container">
+        <h1 id="title">Untuk Dodol Sayang </h1>
+        <p id="message">.</p>
+
+        <img id="cake" src="2.png" class="cake">
+        <img id="ribbon" src="2.png" class="ribbon">
+        
+        <div id="soundSection" class="button-container">
+            <button id="playPauseBtn" class="icon-button" onclick="toggleMusic()">🎵</button>
+            <span id="soundText">Klik Icon Lagu</span>
+        </div>
+        
+        <audio id="bg-music" loop autoplay>
+            <source src="Monolog.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <button onclick="prevPage()" id="prev" style="display: none;">Previous</button>
+        <button onclick="nextPage()" class="next-btn">Next</button>
+        
+
+    <script>
+        let page = 1;
+        const messages = [
+    "Hai kamu yang sedang lelah… 😔 Aku tahu hari-hari ini terasa berat. Tapi kamu nggak sendiri. Aku di sini, dan aku selalu ada buat kamu. 🤍",
+    
+    "Kamu nggak harus kuat setiap saat. Menangis bukan tanda lemah. Istirahat bukan berarti menyerah. Kamu manusia, dan kamu berhak merasa. 🌧️",
+
+    "Aku tahu kamu kecewa, mungkin merasa gagal. Tapi bagiku, kamu adalah sosok yang luar biasa. Kamu tetap berharga, meski dunia tidak selalu adil. 🌍",
+
+    "Ambil napas dalam-dalam, sayang. Semua akan berlalu. Yang sekarang terasa berat, suatu saat akan kamu lihat sebagai bukti bahwa kamu pernah bertahan. 🌈",
+
+    "Kalau kamu ingin menyerah hari ini, nggak apa-apa. Tapi berjanjilah untuk mencoba lagi besok. Aku akan tetap di sini, menunggu senyum kamu kembali. 💛",
+
+    "Dunia boleh gelap, tapi kamu cahaya kecil yang tetap menyala. Jangan padam. Pelan-pelan aja. Kita jalan bareng. Satu langkah kecil pun cukup. ✨",
+
+    "Kamu nggak sendirian. Kamu dicintai. Kamu berarti. Kamu boleh merasa hancur, tapi aku percaya kamu akan pulih. Dan aku akan tetap bersamamu. 🤝"
+];
+
+        
+        const music = document.getElementById("bg-music");
+        const playPauseBtn = document.getElementById("playPauseBtn");
+        const messageElement = document.getElementById("message");
+        const nextButton = document.querySelector(".next-btn");
+        const prevButton = document.getElementById("prev");
+        const soundSection = document.getElementById("soundSection");
+    
+        function toggleMusic() {
+            if (music.paused) {
+                music.play().catch(error => console.log("Autoplay tidak diizinkan: " + error));
+                playPauseBtn.textContent = "⏸️"; // Ikon Pause
+            } else {
+                music.pause();
+                playPauseBtn.textContent = "🎵"; // Ikon Play
+            }
+        }
+
+        function typeMessage(text, callback) {
+            let i = 0;
+            messageElement.innerHTML = ""; 
+            nextButton.disabled = true; // Disable tombol saat mengetik
+            
+            let interval = setInterval(() => {
+                messageElement.innerHTML += text[i];
+                i++;
+                if (i >= text.length) {
+                    clearInterval(interval);
+                    nextButton.disabled = false; // Enable tombol setelah selesai
+                    if (callback) callback();
+                }
+            }, 100);
+        }
+        
+    const photo = document.createElement("img"); 
+    photo.src = "dol3.jpg"; // Ganti dengan path foto yang benar
+    photo.style.display = "none";
+    photo.style.maxWidth = "15%";
+    photo.style.marginTop = "20px";
+    document.querySelector(".container").appendChild(photo);
+
+        function nextPage() {
+            if (page < messages.length) {
+                page++;
+                updatePage();
+            } else {
+        // Tampilkan foto berdua saat "Klik Terakhir" ditekan
+        document.querySelector(".container").innerHTML = "";
+        document.querySelector(".container").appendChild(photo);
+        photo.style.display = "block";
+
+                    // Tampilkan pop-up setelah foto berdua muncul
+    setTimeout(() => {
+    alert("SEMANGAT YA DODOLKU SAYANG I LOVE YOU MMMUUACCHHH ");
+    showRestartButton();
+            }, 1000);
+    }
+
+        }
+    
+        function showRestartButton() {
+        const restartButton = document.createElement("button");
+        restartButton.textContent = "Kembali ke Halaman Pertama";
+        restartButton.style.padding = "10px 20px";
+        restartButton.style.fontSize = "16px";
+        restartButton.style.background = "blue";
+        restartButton.style.color = "white";
+        restartButton.style.border = "none";
+        restartButton.style.borderRadius = "10px";
+        restartButton.style.cursor = "pointer";
+        restartButton.style.marginTop = "20px";
+        restartButton.onclick = () => location.reload(); // Reload halaman
+        
+        document.querySelector(".container").appendChild(restartButton);
+    }
+        function prevPage() {
+            if (page > 1) {
+                page--;
+                updatePage();
+            }
+        }
+    
+        function updatePage() {
+            nextButton.disabled = true; // Pastikan tombol tidak bisa ditekan saat mengetik
+            prevButton.style.display = page > 1 ? "inline-block" : "none";
+    
+            soundSection.style.display = page === 1 ? "flex" : "none";
+            typeMessage(messages[page - 1]);
+        }
+        if (page === messages.length) {
+        nextButton.textContent = "Klik Terakhir"; 
+    } else {
+        nextButton.textContent = "Next";
+    }
+
+        updatePage();
+    </script>    
+    
+</body>
+</html>
